@@ -1,3 +1,2 @@
 # antiplasmodium_predictor
-# antiplasmodium_predictor
-# antiplasmodium_predictor
+The "Antiplasmodium Drug Prediction Platform" is a web application designed to aid in the prediction and analysis of potential antiplasmodium drug compounds. It offers several key features, including the calculation of Lipinski's descriptors to assess a compound's drug-likeness, prediction of a compound's activity and pIC50 value, and visualization of interacting proteins using SMILES input. The app leverages various libraries such as RDKit, Streamlit, Py3Dmol, and scikit-learn to provide an interactive and informative environment for researchers and scientists working in the field of antiplasmodium drug discovery.
