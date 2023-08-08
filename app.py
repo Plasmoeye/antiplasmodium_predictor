@@ -7,8 +7,6 @@ import csv
 import joblib
 from pypdb import *
 from sklearn.preprocessing import StandardScaler
-import py3Dmol
-from stmol import showmol
 
 
 @st.cache_data
@@ -49,33 +47,6 @@ def search_pdb(smiles):
     return prot_str
 
 
-def prot_visualization(prot_str):
-    # The context manager for the sidebar
-    with st.sidebar:
-        st.subheader('Customize Visualization Menu')
-        prot_list = prot_str.split(',')
-        bcolor = st.color_picker('Pick A Color', '#0046F9')
-        protein = st.selectbox('select protein', prot_list)
-        style = st.selectbox('style', ['cartoon', 'cross', 'stick', 'sphere', 'line', 'sphere'])
-        spin = st.checkbox('Spin', value=False)
-
-    # Create the 3D molecular view outside the context manager to keep it visible
-    xyzview = py3Dmol.view(query='pdb:' + protein)
-
-    # Check if a valid PDB ID was retrieved
-    if protein.strip():
-        xyzview.setStyle({style: {'color': 'spectrum'}})
-        xyzview.setBackgroundColor(bcolor)
-        if spin:
-            xyzview.spin(True)
-        else:
-            xyzview.spin(False)
-        xyzview.zoomTo()
-        showmol(xyzview, height=500, width=800)
-    else:
-        st.warning("No valid PDB ID found for the given compound.")
-
-
 # Set page title and initial layout
 st.set_page_config(page_title="Plasmodium Drug Predictor", page_icon='🦟', layout="wide")
 
@@ -85,9 +56,8 @@ st.set_page_config(page_title="Plasmodium Drug Predictor", page_icon='🦟', lay
 # App title
 st.title("Antiplasmodium Drug Prediction Platform")
 
-# Description
 description = """
-The "Antiplasmodium Drug Prediction Platform" is a web application designed to aid in the prediction and analysis of potential antiplasmodium drug compounds. It offers several key features, including the calculation of Lipinski's descriptors to assess a compound's drug-likeness, prediction of a compound's activity and pIC50 value, and visualization of interacting proteins using SMILES input. The app leverages various libraries such as RDKit, Streamlit, Py3Dmol, and scikit-learn to provide an interactive and informative environment for researchers and scientists working in the field of antiplasmodium drug discovery.
+The "Antiplasmodium Drug Prediction Platform" is a versatile web application designed for researchers and scientists in the field of antiplasmodium drug discovery. Leveraging cutting-edge technologies, this platform enables users to predict compound activity, calculate essential molecular descriptors, estimate pIC50 values, and explore potential protein interactions. Built with the powerful RDKit, Streamlit, pypdb, and scikit-learn libraries, this user-friendly app provides an interactive and informative environment for accelerating antiplasmodium drug development.
 """
 
 # Display the description
@@ -116,7 +86,7 @@ def main():
         "Compute Lipinski's Descriptors",
         "Predict the Compound's Activity",
         "Predict the Compound's pIC50",
-        #"Retrieve interacting proteins"
+        "Retrieve interacting proteins"
     ]
 
     # Selectbox
@@ -174,26 +144,20 @@ def main():
                     predicted_value = y_pred[0]
                     predicted_value = format(predicted_value, ".2f")
                     st.text("The pIC50 of your compound is " + str(predicted_value))
+                elif selected_option == "Retrieve interacting proteins":
+                    # Retrieve interacting proteins from PDB database
+                    result = Query(smiles_input).search()
+                    ids_str = ""
+                    for i, pdb_id in enumerate(result):
+                        if i < 30:
+                            ids_str += pdb_id + ", "
+                        else:
+                            break
+                    ids_str = ids_str.rstrip(", ")  # Remove the trailing comma and space
+                    st.markdown(ids_str)
 
             except ValueError as e:
                 st.error(str(e))
-
-    with st.container():
-        st.write("---")
-        st.subheader('Interacting Proteins')
-
-        try:
-            mol = Chem.MolFromSmiles(smiles_input)
-
-            if mol is None:
-                st.text("There are no proteins to view. Please enter valid canonical SMILES")
-            else:
-                if smiles_input:
-                    prot_visualization(search_pdb(smiles_input))
-                else:
-                    st.text("There are no proteins to view. You did not enter canonical SMILES.")
-        except Exception as e:
-            st.text("Error: " + str(e))
 
 if __name__ == "__main__":
     main()
