@@ -165,5 +165,6 @@ if __name__ == "__main__":
 st.write('##')
 st.write('___')
 text = "**Authors**<br>1. Edwin Mwakio, [Masinde Muliro University of Science and Technology](https://www.mmust.ac.ke/)<br>2. [Dr. Clabe Wekesa](https://www.ice.mpg.de/person/128684/2824), [International Max Planck Institute for Chemical Ecology](https://www.ice.mpg.de/)<br>3. [Dr. Patrick Okoth](https://mmust.ac.ke/staffprofiles/index.php/dr-patrick-okoth), [Masinde Muliro University of Science and Technology](https://www.mmust.ac.ke/)"
+
 st.markdown(text, unsafe_allow_html=True)
 st.write('___')
